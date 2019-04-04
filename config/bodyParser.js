@@ -133,7 +133,9 @@ module.exports = {
     | is to true. Otherwise everything is processed manually.
     |
     */
-    processManually: ['/products']
+    processManually: [
+      '/products'
+    ]
 
     /*
     |--------------------------------------------------------------------------

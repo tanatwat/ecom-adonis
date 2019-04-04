@@ -36,10 +36,16 @@ Route.get('/', () => {
   return { greeting: 'Hello world in JSON' }
 })
 
-Route.get('/products/paginate', 'Admin/Product/ProductCrudController.paginate')
 Route.resource('/products', 'Admin/Product/ProductCrudController').apiOnly()
+
+Route.put('/product/:uid/edit/thumbnail', 'Admin/Product/ProductEditController.editThumbnail')
+Route.put('/product/:uid/edit/info', 'Admin/Product/ProductEditController.editInfo')
+Route.put('/product/:uid/edit/category', 'Admin/Product/ProductEditController.editCategory')
+Route.put('/product/:uid/edit/brand', 'Admin/Product/ProductEditController.editBrand')
 
 Route.resource('/categories', 'Admin/CategoryController').apiOnly()
 Route.resource('/brands', 'Admin/BrandController').apiOnly()
 
 Route.get('/get/product_upload_data', 'Api/GetterController.productUpload')
+Route.get('/get/products', 'Api/GetterController.paginateProduct')
+Route.get('/get/product/:uid', 'Api/GetterController.getProduct')

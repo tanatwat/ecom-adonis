@@ -55,7 +55,7 @@ class ProductCrudController {
           .toFormat('jpeg')
         file.stream.pipe(transform).pipe(file.stream)
         await Drive.disk('s3').put('photo/' + photoName, transform)
-        filesName.photos.push(photoName)
+        filesName.photos.push({filename: photoName})
       })
     }
 
@@ -66,7 +66,7 @@ class ProductCrudController {
 
     await request.multipart.process()
 
-    await Product.create({
+    const created = await Product.create({
       category_id: fields.category_id,
       subcategory_id: fields.subcategory_id,
       type_id: fields.type_id,
@@ -78,6 +78,10 @@ class ProductCrudController {
       thumbnail: filesName.thumbnail
     })
 
+    if (filesName.photos.length) {
+      await created.photos().createMany(filesName.photos)
+    }
+
     response.send(fields)
   }
 
@@ -88,14 +92,11 @@ class ProductCrudController {
   }
 
   async destroy ({request, response, params}) {
+    const product = Product.find(params.id).fetch()
 
-    return await Database.table( 'homestead.' + 'products').where('id', params.id).delete()
+    //const product = await Database.table( request.post().database + 'products').where('uid', params.id)
 
-  }
-
-  async paginate ({request, response}) {
-    // paginate(page, items per page)
-    return await Database.table(request.get().db + 'products').paginate(request.get().page, 30)
+    return
   }
 
 }
