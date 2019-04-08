@@ -25,7 +25,8 @@ class Product extends Model {
     return this.belongsTo('App/Models/Brand');
   }
   photos() {
-    return this.hasMany('App/Models/ProductImage');
+    // hasOne(relatedModel, primaryKey, foreignKey)
+    return this.hasMany('App/Models/ProductImage', 'id', 'product_id');
   }
 }
 

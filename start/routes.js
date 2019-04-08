@@ -42,10 +42,12 @@ Route.put('/product/:uid/edit/thumbnail', 'Admin/Product/ProductEditController.e
 Route.put('/product/:uid/edit/info', 'Admin/Product/ProductEditController.editInfo')
 Route.put('/product/:uid/edit/category', 'Admin/Product/ProductEditController.editCategory')
 Route.put('/product/:uid/edit/brand', 'Admin/Product/ProductEditController.editBrand')
+Route.put('/product/:uid/edit/choice', 'Admin/Product/ProductEditController.editChoice')
+Route.post('/product/:uid/edit/photo/upload', 'Admin/Product/ProductEditController.uploadPhoto')
+Route.put('/product/:uid/edit/photo/delete', 'Admin/Product/ProductEditController.deletePhoto')
 
 Route.resource('/categories', 'Admin/CategoryController').apiOnly()
 Route.resource('/brands', 'Admin/BrandController').apiOnly()
 
 Route.get('/get/product_upload_data', 'Api/GetterController.productUpload')
-Route.get('/get/products', 'Api/GetterController.paginateProduct')
 Route.get('/get/product/:uid', 'Api/GetterController.getProduct')

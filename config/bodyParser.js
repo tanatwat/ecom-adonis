@@ -134,7 +134,8 @@ module.exports = {
     |
     */
     processManually: [
-      '/products'
+      '/products',
+      '/product/:uid/edit/photo/upload',
     ]
 
     /*

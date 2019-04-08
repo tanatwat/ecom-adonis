@@ -10,17 +10,9 @@ class GetterController {
   async getProduct ({request, response, params}) {
     const product = await Product.find(params.uid)
 
-    await product.loadMany(['category', 'subcategory', 'type', 'brand'])
+    await product.loadMany(['category', 'subcategory', 'type', 'brand', 'photos'])
 
     response.send(product)
-  }
-
-  async paginateProduct ({request, response}) {
-    const products = await Product.query()
-    .filter(request.all())
-    .paginate(request.get().page, 30)
-
-    response.send(products)
   }
 
   async productUpload({request, response}) {

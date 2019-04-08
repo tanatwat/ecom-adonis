@@ -10,15 +10,11 @@ const Product = use('App/Models/Product')
 class ProductCrudController {
 
   async index ({request, response}) {
+    const products = await Product.query()
+    .filter(request.all())
+    .paginate(request.get().page, 30)
 
-    return await Database.table( 'ecom.' + 'products').first()
-
-  }
-
-  async show ({request, response, params}) {
-
-    return await Database.table( 'homestead.' + 'products').where('id', params.id)
-
+    response.send(products)
   }
 
   async store ({request, response}) {
@@ -66,12 +62,13 @@ class ProductCrudController {
 
     await request.multipart.process()
 
+    const uid = shortid.generate()
     const created = await Product.create({
       category_id: fields.category_id,
       subcategory_id: fields.subcategory_id,
       type_id: fields.type_id,
       brand_id: fields.brand_id,
-      uid: shortid.generate(),
+      uid: uid,
       name: fields.name,
       price: fields.price,
       choice: fields.choice,
@@ -79,24 +76,29 @@ class ProductCrudController {
     })
 
     if (filesName.photos.length) {
-      await created.photos().createMany(filesName.photos)
+      const target = await Product.find(uid)
+      await target.photos().createMany(filesName.photos)
     }
 
-    response.send(fields)
-  }
-
-  async update ({request, response}) {
-
-    return await Database.table( 'homestead.' + 'products').where('id', params.id)
 
   }
 
   async destroy ({request, response, params}) {
-    const product = Product.find(params.id).fetch()
 
-    //const product = await Database.table( request.post().database + 'products').where('uid', params.id)
+    const product = await Product.find(params.id)
+    const photos = await product.photos().fetch()
+    const photosJSON = photos.toJSON()
 
-    return
+    await Drive.disk('s3').delete('thumbnail/' + product.thumbnail)
+
+    if (photosJSON.length) {
+      for (const val in photosJSON) {
+        await Drive.disk('s3').delete('photo/' + photosJSON[val].filename)
+      }
+    }
+
+    await product.delete()
+
   }
 
 }

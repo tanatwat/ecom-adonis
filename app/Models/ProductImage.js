@@ -5,7 +5,7 @@ const Model = use('Model')
 
 class ProductImage extends Model {
   product() {
-    return this.belongsTo('App/Models/Product');
+    return this.belongsTo('App/Models/Product', 'product_id', 'id');
   }
 }
 
