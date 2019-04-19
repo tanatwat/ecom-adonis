@@ -7,6 +7,7 @@ class ShippingsSchema extends Schema {
   up () {
     this.create('shippings', (table) => {
       table.increments()
+      table.integer('client_id').notNullable().unsigned().references('clients.id').onDelete('cascade')
       table.string('method').notNullable()
       table.integer('fee')
       table.integer('multiply')

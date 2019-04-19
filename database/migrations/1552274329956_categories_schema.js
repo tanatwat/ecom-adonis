@@ -9,6 +9,7 @@ class CategoriesSchema extends Schema {
       table.increments()
       table.string('name').notNullable()
       table.text('translate')
+      table.integer('client_id').notNullable().unsigned().references('clients.id').onDelete('cascade')
     })
   }
 

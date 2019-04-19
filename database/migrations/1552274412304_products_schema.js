@@ -7,6 +7,7 @@ class ProductsSchema extends Schema {
   up () {
     this.create('products', (table) => {
       table.increments()
+      table.integer('client_id').notNullable().unsigned().references('clients.id').onDelete('cascade')
       table.integer('category_id').notNullable().unsigned().references('categories.id').onDelete('cascade')
       table.integer('subcategory_id').unsigned().references('subcategories.id').onDelete('cascade')
       table.integer('type_id').unsigned().references('types.id').onDelete('cascade')

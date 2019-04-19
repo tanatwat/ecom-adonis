@@ -7,6 +7,7 @@ class PaymentMethodsSchema extends Schema {
   up () {
     this.create('payment_methods', (table) => {
       table.increments()
+      table.integer('client_id').notNullable().unsigned().references('clients.id').onDelete('cascade')
       table.text('method').notNullable()
       table.string('provider').notNullable()
       table.text('translate')

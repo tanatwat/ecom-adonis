@@ -7,6 +7,7 @@ class ConfigsSchema extends Schema {
   up () {
     this.create('configs', (table) => {
       table.increments()
+      table.integer('client_id').notNullable().unsigned().references('clients.id').onDelete('cascade')
       table.string('type').notNullable()
       table.string('value')
       table.text('array_value')

@@ -46,6 +46,9 @@ Route.put('/product/:uid/edit/choice', 'Admin/Product/ProductEditController.edit
 Route.post('/product/:uid/edit/photo/upload', 'Admin/Product/ProductEditController.uploadPhoto')
 Route.put('/product/:uid/edit/photo/delete', 'Admin/Product/ProductEditController.deletePhoto')
 
+Route.post('/login', 'Admin/ClientController.login')
+Route.post('/check', 'Admin/ClientController.check')
+
 Route.resource('/categories', 'Admin/CategoryController').apiOnly()
 Route.resource('/brands', 'Admin/BrandController').apiOnly()
 

@@ -7,6 +7,7 @@ class RatingsSchema extends Schema {
   up () {
     this.create('ratings', (table) => {
       table.increments()
+      table.integer('client_id').notNullable().unsigned().references('clients.id').onDelete('cascade')
       table.integer('user_id').notNullable().unsigned().references('users.id').onDelete('cascade')
       table.integer('product_id').notNullable().unsigned().references('products.id').onDelete('cascade')
       table.integer('points', 1).notNullable()

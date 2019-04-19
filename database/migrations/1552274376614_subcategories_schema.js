@@ -10,6 +10,7 @@ class SubcategoriesSchema extends Schema {
       table.string('name').notNullable()
       table.text('translate')
       table.integer('category_id').notNullable().unsigned().references('categories.id').onDelete('cascade')
+      table.integer('client_id').notNullable().unsigned().references('clients.id').onDelete('cascade')
     })
   }
 
