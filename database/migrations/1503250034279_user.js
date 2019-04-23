@@ -10,7 +10,7 @@ class UserSchema extends Schema {
       table.integer('client_id').notNullable().unsigned().references('clients.id').onDelete('cascade')
       table.string('username', 30).notNullable().unique()
       table.string('email').notNullable().unique()
-      table.string('password', 30).notNullable()
+      table.string('password').notNullable()
       table.timestamp('verified_at').notNullable()
       table.string('name').notNullable()
       table.text('address')

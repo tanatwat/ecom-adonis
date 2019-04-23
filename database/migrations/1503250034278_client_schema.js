@@ -9,7 +9,7 @@ class ClientSchema extends Schema {
       table.increments()
       table.string('site').notNullable()
       table.string('email').notNullable().unique()
-      table.string('password', 30).notNullable()
+      table.string('password').notNullable()
       table.string('plan').notNullable()
       table.string('name').notNullable()
       table.text('address')

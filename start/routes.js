@@ -36,7 +36,7 @@ Route.get('/', () => {
   return { greeting: 'Hello world in JSON' }
 })
 
-Route.resource('/products', 'Admin/Product/ProductCrudController').apiOnly()
+Route.resource('/products', 'Admin/Product/ProductCrudController').apiOnly().middleware('auth:admin')
 
 Route.put('/product/:uid/edit/thumbnail', 'Admin/Product/ProductEditController.editThumbnail')
 Route.put('/product/:uid/edit/info', 'Admin/Product/ProductEditController.editInfo')
@@ -49,7 +49,8 @@ Route.put('/product/:uid/edit/photo/delete', 'Admin/Product/ProductEditControlle
 Route.post('/login', 'Admin/ClientController.login')
 Route.post('/check', 'Admin/ClientController.check')
 
-Route.resource('/categories', 'Admin/CategoryController').apiOnly()
+Route.get('/categories', 'Admin/CategoryController.get')
+Route.resource('/categories', 'Admin/CategoryController').apiOnly().middleware('auth:admin')
 Route.resource('/brands', 'Admin/BrandController').apiOnly()
 
 Route.get('/get/product_upload_data', 'Api/GetterController.productUpload')

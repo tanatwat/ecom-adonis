@@ -5,8 +5,8 @@ const Category = use('App/Models/Category')
 
 class CategoryController {
 
-  async index({request, response}) {
-    const categories = await Category.query().with('subcategory.type').fetch()
+  async get({request, response}) {
+    const categories = await Category.query().ownerIs(request.header('Client')).with('subcategory.type').fetch()
 
     return categories;
   }
