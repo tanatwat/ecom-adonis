@@ -14,7 +14,8 @@ class CategoryController {
   async store ({request, response}) {
     // Insert category first
     const category = await Category.create({
-      name: request.post().category
+      name: request.post().category,
+      client_id: request.header('Client')
     })
     // Followed by insert subcategory
     for (var subcategory of request.post().subcategories) {
@@ -39,13 +40,13 @@ class CategoryController {
 
   async update ({request, response}) {
 
-    return await Database.table( 'homestead.' + 'categories').where('id', params.id)
+    return await Database.table('categories').where('id', params.id)
 
   }
 
-  async destroy ({request, response, params}) {
+  async destroy ({request, params}) {
 
-    return await Database.table( request.post().database + 'categories').where('id', params.id).delete()
+    return await Database.table('categories').where('id', params.id).where('client_id', request.header('client')).delete()
 
   }
 }

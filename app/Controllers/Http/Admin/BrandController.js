@@ -6,35 +6,38 @@ const Brand = use('App/Models/Brand')
 class CategoryController {
 
   async index({request, response}) {
-    const brands = await Brand.query().fetch()
+    const brands = await Brand.query().ownerIs(request.header('Client')).fetch()
 
-    return brands;
+    response.send(brands)
   }
 
   async store ({request, response}) {
 
     const brand = await Brand.create({
-      name: request.post().brand
+      name: request.post().brand,
+      client_id: request.header('Client')
     })
 
-    return brand;
+    response.send(brand)
 
   }
 
-  async update ({request, response, params}) {
+  async update ({request, params}) {
 
     return await Database
-    .table( request.post().database + 'brands')
+    .table('brands')
     .where('id', params.id)
+    .where('client_id', request.header('Client'))
     .update('name', request.post().brand)
 
   }
 
-  async destroy ({request, response, params}) {
+  async destroy ({request, params}) {
 
     return await Database
-    .table( request.post().database + 'brands')
+    .table('brands')
     .where('id', params.id)
+    .where('client_id', request.header('Client'))
     .delete()
 
   }

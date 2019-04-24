@@ -11,9 +11,15 @@ class CheckAdmin {
    * @param {Request} ctx.request
    * @param {Function} next
    */
-  async handle ({ request }, next) {
+  async handle ({ auth, request }, next) {
     // call next to advance the request
-    await next()
+    try {
+      await auth.authenticator('admin').check()
+      await next()
+    } catch (error) {
+      return 'Not authenticated'
+    }
+    
   }
 }
 

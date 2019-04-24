@@ -9,7 +9,7 @@ const fs = require('fs')
 
 class ProductCrudController {
 
-  async editThumbnail ({request, response, params}) {
+  async editThumbnail ({request, params}) {
     var base64 = request.post().thumbnail
     var result = base64.split(',')
 
@@ -29,7 +29,10 @@ class ProductCrudController {
       await Promise.all([
         Drive.disk('s3').put('thumbnail/' + thumbnailName, data),
         Drive.disk('s3').delete('thumbnail/' + request.post().fileToDelete),
-        Database.table(request.post().database + 'products').where('uid', params.uid).update({
+        Database.table('products')
+        .where('uid', params.uid)
+        .where('client_id', request.header('Client'))
+        .update({
           thumbnail: thumbnailName
         })
       ])
@@ -37,7 +40,7 @@ class ProductCrudController {
 
   async editInfo ({request, response, params}) {
 
-    return await Database.table(request.post().database + 'products').where('uid', params.uid).update({
+    return await Database.table('products').where('uid', params.uid).update({
       name: request.post().name,
       price: request.post().price
     })
@@ -46,7 +49,7 @@ class ProductCrudController {
 
   async editCategory ({request, response, params}) {
 
-    return await Database.table( request.post().database + 'products').where('uid', params.uid).update({
+    return await Database.table('products').where('uid', params.uid).update({
       category_id: request.post().category,
       subcategory_id: request.post().subcategory,
       type_id: request.post().type,
@@ -55,13 +58,13 @@ class ProductCrudController {
   }
 
   async editBrand ({request, response, params}) {
-    return await Database.table( request.post().database + 'products').where('uid', params.uid).update({
+    return await Database.table('products').where('uid', params.uid).update({
       brand_id: request.post().brand,
     })
   }
 
   async editChoice ({request, response, params}) {
-    return await Database.table( request.post().database + 'products').where('uid', params.uid).update({
+    return await Database.table('products').where('uid', params.uid).update({
       choice: request.post().choice,
     })
   }

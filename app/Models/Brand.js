@@ -4,15 +4,15 @@
 const Model = use('Model')
 
 class Brand extends Model {
-  product() {
-    return this.belongsTo('App/Models/Product')
-  }
-  static get createdAtColumn() {
-    return null
+  
+  static boot () {
+    super.boot()
+    this.addTrait('NoTimeStamp')
+    this.addTrait('Owner')
   }
 
-  static get updatedAtColumn() {
-    return null
+  product() {
+    return this.belongsTo('App/Models/Product')
   }
 }
 

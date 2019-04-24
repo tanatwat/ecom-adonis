@@ -8,6 +8,7 @@ class Product extends Model {
   static boot () {
     super.boot()
     this.addTrait('@provider:Filterable', ProductFilter)
+    this.addTrait('Owner')
   }
   static get primaryKey () {
     return 'uid'
