@@ -7,12 +7,31 @@ const Product = use('App/Models/Product')
 
 class GetterController {
 
-  async getProduct ({request, response, params}) {
+
+  async getProductsPagiante({ request, response }) {
+    const products = await Product.query()
+      .ownerIs(request.header("Client"))
+      .filter(request.all())
+      .paginate(request.get().page, 30);
+
+    response.send(products);
+  }
+  async getProduct ({response, params}) {
     const product = await Product.find(params.uid)
 
     await product.loadMany(['category', 'subcategory', 'type', 'brand', 'photos'])
 
     response.send(product)
+  }
+
+  async getDiscountProducts ({request, response}) {
+    const products = await Product.query()
+    .ownerIs(request.header("Client"))
+    .filter(request.all())
+    .whereNotNull('discount_price')
+    .fetch()
+
+    response.send(products)
   }
 
   async productUpload({request, response}) {

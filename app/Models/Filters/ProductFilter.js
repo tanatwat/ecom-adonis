@@ -30,14 +30,20 @@ class ProductFilter extends ModelFilter {
   }
 
   dc (val) {
-    return this.whereNotNull('discount_price')
+    if(val == 'true') {
+      return this.whereNotNull('discount_price')
+    } else if (val == 'false') {
+      return this.whereNull('discount_price')
+    } else if (val == 'all') {
+      return
+    }
   }
 
   order (val) {
     if (val == 'min') {
-      return this.orderBy('discount_price', 'asc').orderBy('price', 'asc');
+      return this.orderBy('price', 'asc').orderBy('discount_price', 'asc');
     } else {
-      return this.orderBy('discount_price', 'desc').orderBy('price', 'desc');
+      return this.orderBy('price', 'desc').orderBy('discount_price', 'desc');
     }
   }
 
