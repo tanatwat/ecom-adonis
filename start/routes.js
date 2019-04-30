@@ -54,6 +54,9 @@ Route.get('/categories', 'Admin/CategoryController.get')
 Route.resource('/categories', 'Admin/CategoryController').apiOnly().middleware('auth:admin')
 Route.resource('/brands', 'Admin/BrandController').apiOnly().middleware('auth:admin')
 
+Route.get('/promotions/codes', 'Admin/Promotion/CodeController.get')
+Route.resource('/promotions/codes', 'Admin/Promotion/CodeController').apiOnly().middleware('auth:admin')
+
 Route.put('/promotions/discount/cancle_all', 'Admin/Promotion/DiscountController.cancleAllDiscount').middleware('auth:admin')
 Route.put('/promotions/discount/:uid', 'Admin/Promotion/DiscountController.applyDiscount').middleware('auth:admin')
 Route.put('/promotions/discount/:uid/cancle', 'Admin/Promotion/DiscountController.cancleDiscount').middleware('auth:admin')

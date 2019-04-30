@@ -8,11 +8,10 @@ class CodesSchema extends Schema {
     this.create('codes', (table) => {
       table.increments()
       table.integer('client_id').notNullable().unsigned().references('clients.id').onDelete('cascade')
-      table.string('code', 25)
+      table.string('code', 20)
       table.integer('value')
       table.string('type')
       table.boolean('enabled').defaultTo(true)
-      table.timestamps()
     })
   }
 
