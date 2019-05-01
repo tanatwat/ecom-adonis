@@ -39,6 +39,8 @@ Route.get('/', () => {
 
 Route.resource('/products', 'Admin/Product/ProductCrudController').apiOnly().middleware('auth:admin')
 
+Route.put('/product/:uid/stock/update', 'Admin/Product/ProductEditController.updateStock')
+
 Route.put('/product/:uid/edit/thumbnail', 'Admin/Product/ProductEditController.editThumbnail')
 Route.put('/product/:uid/edit/info', 'Admin/Product/ProductEditController.editInfo')
 Route.put('/product/:uid/edit/category', 'Admin/Product/ProductEditController.editCategory')

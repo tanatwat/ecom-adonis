@@ -100,8 +100,17 @@ class ProductCrudController {
   async deletePhoto ({request, response, params}) {
     await Promise.all([
       Drive.disk('s3').delete('photo/' + request.post().photo),
-      Database.table( request.post().database + 'product_images').where('filename', request.post().photo).delete()
+      Database.table('product_images').where('filename', request.post().photo).delete()
     ])
+  }
+
+  async updateStock({request, response, params}) {
+    await Database.table('products')
+    .where('uid', params.uid)
+    .where('client_id', request.header('Client'))
+    .update({
+      stock: request.post().qty
+    })
   }
 }
 

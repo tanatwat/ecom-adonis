@@ -13,6 +13,9 @@ class Product extends Model {
   static get primaryKey () {
     return 'uid'
   }
+  getChoice (choice) {
+    return JSON.parse(choice)
+  }
   category() {
     return this.belongsTo('App/Models/Category');
   }

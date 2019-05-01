@@ -14,8 +14,9 @@ class GetterController {
       .filter(request.all())
       .paginate(request.get().page, 30);
 
-    response.send(products);
+    response.send(products.toJSON());
   }
+
   async getProduct ({response, params}) {
     const product = await Product.find(params.uid)
 

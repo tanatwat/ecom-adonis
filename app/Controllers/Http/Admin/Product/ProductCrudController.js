@@ -14,7 +14,7 @@ class ProductCrudController {
       photos: []
     };
     request.multipart.file("thumbnail", {}, async file => {
-      const thumbnailName = shortid.generate() + ".jpg";
+      const thumbnailName = shortid.generate();
       const data = await sharp()
         .resize(200, 200, {
           kernel: sharp.kernel.nearest,
@@ -25,7 +25,7 @@ class ProductCrudController {
         .jpeg({ quality: 80 })
         .toFormat("jpeg");
       file.stream.pipe(data);
-      await Drive.disk("s3").put("thumbnail/" + thumbnailName, data);
+      await Drive.disk("s3").put("thumbnail/" + thumbnailName  + ".jpg", data);
       filesName.thumbnail = thumbnailName;
     });
 
@@ -60,11 +60,11 @@ class ProductCrudController {
       subcategory_id: fields.subcategory_id,
       type_id: fields.type_id,
       brand_id: fields.brand_id,
-      uid: shortid.generate(),
+      uid: filesName.thumbnail,
       name: fields.name,
       price: fields.price,
       choice: fields.choice,
-      thumbnail: filesName.thumbnail
+      thumbnail: filesName.thumbnail + ".jpg"
     });
 
     if (filesName.photos.length) {
