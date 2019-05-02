@@ -29,6 +29,10 @@ class ProductFilter extends ModelFilter {
     return this.where('price', '>=', +val)
   }
 
+  except (val) {
+    return this.whereNotIn('id', JSON.parse(val))
+  }
+
   dc (val) {
     if(val == 'true') {
       return this.whereNotNull('discount_price')

@@ -4,7 +4,7 @@ const Database = use('Database')
 const Code = use('App/Models/Code')
 
 class CodeController {
-   async get ({request}) {
+   async index ({request}) {
       return await Database.table('codes').where('client_id', request.header('Client'))
    }
 
