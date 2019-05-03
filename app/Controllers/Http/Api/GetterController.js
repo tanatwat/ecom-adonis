@@ -20,7 +20,7 @@ class GetterController {
   async getProduct ({response, params}) {
     const product = await Product.find(params.uid)
 
-    await product.loadMany(['category', 'subcategory', 'type', 'brand', 'photos'])
+    await product.loadMany(['category', 'subcategory', 'type', 'brand'])
 
     response.send(product)
   }

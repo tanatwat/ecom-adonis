@@ -16,6 +16,13 @@ class Product extends Model {
   getChoice (choice) {
     return JSON.parse(choice)
   }
+  getPhotos (photos) {
+    if (photos) {
+      return JSON.parse(photos);
+    } else {
+      return [];
+    }
+  }
   category() {
     return this.belongsTo('App/Models/Category');
   }
@@ -27,10 +34,6 @@ class Product extends Model {
   }
   brand() {
     return this.belongsTo('App/Models/Brand');
-  }
-  photos() {
-    // hasOne(relatedModel, primaryKey, foreignKey)
-    return this.hasMany('App/Models/ProductImage', 'id', 'product_id');
   }
 }
 

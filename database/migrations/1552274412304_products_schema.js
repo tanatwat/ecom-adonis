@@ -18,6 +18,7 @@ class ProductsSchema extends Schema {
       table.string('discount_price')
       table.text('description')
       table.string('thumbnail').notNullable().defaultTo('no_img.jpg')
+      table.text('photos').notNullable().defaultTo('[]')
       table.text('choice')
       table.integer('view_count').notNullable().defaultTo(0)
       table.enu('visibility', ['public', 'private', 'unlisted']).notNullable().defaultTo('public')

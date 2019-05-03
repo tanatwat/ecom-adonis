@@ -7,7 +7,6 @@ const Product = use("App/Models/Product");
 const ProductImage = use("App/Models/ProductImage");
 
 class ProductCrudController {
-
   async store({ request, response }) {
     let filesName = {
       thumbnail: null,
@@ -25,12 +24,12 @@ class ProductCrudController {
         .jpeg({ quality: 80 })
         .toFormat("jpeg");
       file.stream.pipe(data);
-      await Drive.disk("s3").put("thumbnail/" + thumbnailName  + ".jpg", data);
+      await Drive.disk("s3").put("thumbnail/" + thumbnailName + ".jpg", data);
       filesName.thumbnail = thumbnailName;
     });
 
-    const filesCount = request.header('FilesCount')
-    
+    const filesCount = request.header("FilesCount");
+
     for (let i = 0; i < filesCount; i++) {
       request.multipart.file("files[" + i + "]", {}, async file => {
         let photoName = shortid.generate() + ".jpg";
@@ -45,7 +44,10 @@ class ProductCrudController {
           .toFormat("jpeg");
         file.stream.pipe(transform);
         await Drive.disk("s3").put("photo/" + photoName, transform);
-        filesName.photos.push({ filename: photoName });
+        //If using product images model use commented function below
+        //filesName.photos.push({ filename: photoName });
+
+        filesName.photos.push(photoName);
       });
     }
 
@@ -66,30 +68,32 @@ class ProductCrudController {
       name: fields.name,
       price: fields.price,
       choice: fields.choice,
-      thumbnail: filesName.thumbnail + ".jpg"
+      thumbnail: filesName.thumbnail + ".jpg",
+      photos: JSON.stringify(filesName.photos)
     });
 
-    if (filesName.photos.length) {
-      await filesName.photos.map(function(val) {
-        val.product_id = created.uid;
-      });
+    //If using product images model use commented function below
 
-      await ProductImage.createMany(filesName.photos);
-    }
+    // if (filesName.photos.length) {
+    //   await filesName.photos.map(function(val) {
+    //     val.product_id = created.uid;
+    //   });
+
+    //   await ProductImage.createMany(filesName.photos);
+    // }
 
     response.send("success");
   }
 
   async destroy({ request, params }) {
     const product = await Product.find(params.id);
-    const photos = await product.photos().fetch();
-    const photosJSON = photos.toJSON();
+    const parsed = product.toJSON();
 
     await Drive.disk("s3").delete("thumbnail/" + product.thumbnail);
 
-    if (photosJSON.length) {
-      for (const val in photosJSON) {
-        await Drive.disk("s3").delete("photo/" + photosJSON[val].filename);
+    if (parsed.photos.length >= 1) {
+      for (const val of parsed.photos) {   
+        await Drive.disk("s3").delete("photo/" + val);
       }
     }
 

@@ -1,118 +1,130 @@
-'use strict'
-const sharp = require('sharp')
-const shortid = require('shortid')
-const Product = use('App/Models/Product')
-const Database = use('Database')
-const Helpers = use('Helpers')
-const Drive = use('Drive')
-const fs = require('fs')
+"use strict";
+const sharp = require("sharp");
+const shortid = require("shortid");
+const Product = use("App/Models/Product");
+const Database = use("Database");
+const Helpers = use("Helpers");
+const Drive = use("Drive");
+const fs = require("fs");
 
 class ProductCrudController {
-
-  async editThumbnail ({request, params}) {
-    var base64 = request.post().thumbnail
-    var result = base64.split(',')
+  async editThumbnail({ request, params }) {
+    var base64 = request.post().thumbnail;
+    var result = base64.split(",");
 
     let image = new Buffer(result[1], "base64");
 
-    const thumbnailName = await shortid.generate() + '.jpg'
+    const thumbnailName = request.post().fileToDelete;
     const data = await sharp(image)
-      .resize(200,200, {
+      .resize(200, 200, {
         kernel: sharp.kernel.nearest,
-        quality: 70,
-        fit: 'contain',
+        quality: 80,
+        fit: "contain",
         background: { r: 255, g: 255, b: 255, alpha: 1 }
       })
-      .jpeg({quality: 80})
-      .toFormat('jpeg')
+      .toFormat("jpeg");
 
-      await Promise.all([
-        Drive.disk('s3').put('thumbnail/' + thumbnailName, data),
-        Drive.disk('s3').delete('thumbnail/' + request.post().fileToDelete),
-        Database.table('products')
-        .where('uid', params.uid)
-        .where('client_id', request.header('Client'))
-        .update({
-          thumbnail: thumbnailName
-        })
-      ])
+    await Drive.disk("s3").delete("thumbnail/" + thumbnailName);
+    await Drive.disk("s3").put("thumbnail/" + thumbnailName, data);
   }
 
-  async editInfo ({request, response, params}) {
-
-    return await Database.table('products').where('uid', params.uid).update({
-      name: request.post().name,
-      price: request.post().price
-    })
-
+  async editInfo({ request, params }) {
+    return await Database.table("products")
+      .where("uid", params.uid)
+      .update({
+        name: request.post().name,
+        price: request.post().price
+      });
   }
 
-  async editCategory ({request, response, params}) {
-
-    return await Database.table('products').where('uid', params.uid).update({
-      category_id: request.post().category,
-      subcategory_id: request.post().subcategory,
-      type_id: request.post().type,
-    })
-
+  async editCategory({ request, params }) {
+    return await Database.table("products")
+      .where("uid", params.uid)
+      .update({
+        category_id: request.post().category,
+        subcategory_id: request.post().subcategory,
+        type_id: request.post().type
+      });
   }
 
-  async editBrand ({request, response, params}) {
-    return await Database.table('products').where('uid', params.uid).update({
-      brand_id: request.post().brand,
-    })
+  async editBrand({ request, params }) {
+    return await Database.table("products")
+      .where("uid", params.uid)
+      .update({
+        brand_id: request.post().brand
+      });
   }
 
-  async editChoice ({request, response, params}) {
-    return await Database.table('products').where('uid', params.uid).update({
-      choice: request.post().choice,
-    })
+  async editChoice({ request, params }) {
+    return await Database.table("products")
+      .where("uid", params.uid)
+      .update({
+        choice: request.post().choice
+      });
   }
 
-  async uploadPhoto ({request, response, params}) {
-    let photos = []
-    const filesCount = request.header('FilesCount')
+  async uploadPhoto({ request, response, params }) {
+    let photos = [];
+    const filesCount = request.header("FilesCount");
+
     for (let i = 0; i < filesCount; i++) {
-    request.multipart.file('files[' + i + ']', {}, async file => {
-        let photoName = shortid.generate() + '.jpg'
-        let transform = sharp()
-          .resize(400,400, {
+      request.multipart.file("files[" + i + "]", {}, async file => {
+        let photoName = shortid.generate() + ".jpg";
+        let transform = await sharp()
+          .resize(400, 400, {
             kernel: sharp.kernel.nearest,
             quality: 70,
-            fit: 'contain',
+            fit: "contain",
             background: { r: 255, g: 255, b: 255, alpha: 1 }
           })
           .jpeg()
-          .toFormat('jpeg')
-        file.stream.pipe(transform).pipe(file.stream)
-        await Drive.disk('s3').put('photo/' + photoName, transform)
-        photos.push({filename: photoName})
-      })
+          .toFormat("jpeg");
+        file.stream.pipe(transform);
+        await Drive.disk("s3").put("photo/" + photoName, transform);
+        photos.push(photoName);
+      });
     }
 
-    await request.multipart.process()
+    let fields = {};
+    request.multipart.field(async (name, value) => {
+      fields[name] = value;
+    });
 
-    const product = await Product.find(params.uid)
-    await product.photos().createMany(photos)
+    await request.multipart.process();
 
-    response.send(photos)
+    let converted = fields.photos.split(",");
+    const filesList = photos.concat(converted);
+
+    await Database.table("products")
+      .where("client_id", request.header("Client"))
+      .where("uid", params.uid)
+      .update({
+        photos: JSON.stringify(filesList)
+      });
+
+    response.send(photos);
   }
 
-  async deletePhoto ({request, response, params}) {
+  async deletePhoto({ request, params }) {
     await Promise.all([
-      Drive.disk('s3').delete('photo/' + request.post().photo),
-      Database.table('product_images').where('filename', request.post().photo).delete()
-    ])
+      Drive.disk("s3").delete("photo/" + request.post().photo),
+      Database.table("products")
+        .where("client_id", request.header("Client"))
+        .where("uid", params.uid)
+        .update({
+          photos: JSON.stringify(request.post().files)
+        })
+    ]);
   }
 
-  async updateStock({request, response, params}) {
-    await Database.table('products')
-    .where('uid', params.uid)
-    .where('client_id', request.header('Client'))
-    .update({
-      stock: request.post().qty
-    })
+  async updateStock({ request, params }) {
+    await Database.table("products")
+      .where("uid", params.uid)
+      .where("client_id", request.header("Client"))
+      .update({
+        stock: request.post().qty
+      });
   }
 }
 
-module.exports = ProductCrudController
+module.exports = ProductCrudController;
