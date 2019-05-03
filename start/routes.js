@@ -66,6 +66,9 @@ Route.put('/promotions/discount/cancle_all', 'Admin/Promotion/DiscountController
 Route.put('/promotions/discount/:uid', 'Admin/Promotion/DiscountController.applyDiscount').middleware('auth:admin')
 Route.put('/promotions/discount/:uid/cancle', 'Admin/Promotion/DiscountController.cancleDiscount').middleware('auth:admin')
 
+Route.get('/banners', 'Admin/BannerController.index').middleware('auth:admin')
+Route.post('/banners/upload', 'Admin/BannerController.store').middleware('auth:admin')
+Route.put('/banners/remove', 'Admin/BannerController.destroy').middleware('auth:admin')
 
 Route.get('/get/products', 'Api/GetterController.getProductsPagiante')
 Route.get('/get/product/:uid', 'Api/GetterController.getProduct')

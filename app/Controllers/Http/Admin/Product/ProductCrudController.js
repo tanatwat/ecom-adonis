@@ -29,7 +29,9 @@ class ProductCrudController {
       filesName.thumbnail = thumbnailName;
     });
 
-    for (let i = 0; i < 7; i++) {
+    const filesCount = request.header('FilesCount')
+    
+    for (let i = 0; i < filesCount; i++) {
       request.multipart.file("files[" + i + "]", {}, async file => {
         let photoName = shortid.generate() + ".jpg";
         let transform = await sharp()

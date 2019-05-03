@@ -16,7 +16,7 @@ class ShowcaseController {
       name: request.post().name
     });
 
-    return { id: created[0] };
+    return { id: created[0], products: [] };
   }
 
   async destroy({ request, params }) {
