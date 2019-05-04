@@ -47,6 +47,10 @@ class GetterController {
     return result
   }
 
+  async getShippings({request}) {
+    return await Database.table('shippings').where('client_id', request.header('Client'))
+  }
+
 }
 
 module.exports = GetterController

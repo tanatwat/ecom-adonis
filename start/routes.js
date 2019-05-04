@@ -70,7 +70,10 @@ Route.get('/banners', 'Admin/BannerController.index').middleware('auth:admin')
 Route.post('/banners/upload', 'Admin/BannerController.store').middleware('auth:admin')
 Route.put('/banners/remove', 'Admin/BannerController.destroy').middleware('auth:admin')
 
+Route.resource('/shippings', 'Admin/ShippingController').apiOnly().middleware('auth:admin')
+
 Route.get('/get/products', 'Api/GetterController.getProductsPagiante')
 Route.get('/get/product/:uid', 'Api/GetterController.getProduct')
 Route.get('/get/product_upload_data', 'Api/GetterController.productUpload')
 Route.get('/get/product_discount', 'Api/GetterController.getDiscountProducts')
+Route.get('/get/shippings', 'Api/GetterController.getShippings')
