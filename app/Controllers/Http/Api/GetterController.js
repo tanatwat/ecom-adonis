@@ -7,7 +7,6 @@ const Product = use('App/Models/Product')
 
 class GetterController {
 
-
   async getProductsPagiante({ request, response }) {
     const products = await Product.query()
       .ownerIs(request.header("Client"))
@@ -49,6 +48,10 @@ class GetterController {
 
   async getShippings({request}) {
     return await Database.table('shippings').where('client_id', request.header('Client'))
+  }
+
+  async getPayments({request}) {
+    return await Database.table('payment_methods').where('client_id', request.header('Client'))
   }
 
 }
